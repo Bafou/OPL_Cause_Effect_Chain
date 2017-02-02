@@ -2,13 +2,17 @@ package fil.iagl.opl.colombo;
 
 import bsh.EvalError;
 import bsh.Interpreter;
+import fil.iagl.opl.colombo.challenge.ChainElement;
 import spoon.reflect.code.CtBlock;
+import spoon.reflect.code.CtStatement;
 
+import java.util.LinkedList;
 import java.util.List;
 
 public class BshEvaluator {
 
     private Interpreter interpreter;
+    private String traceName;
 
     public BshEvaluator() throws EvalError {
         interpreter = new Interpreter();
@@ -25,7 +29,12 @@ public class BshEvaluator {
 
         interpreter.eval("import fil.iagl.opl.colombo.challenge;");
 
+        interpreter.eval("import *;");
+
         interpreter.eval("assert(boolean condition) { " + "if (!condition) " + "throw new Exception();" + "}");
+
+        traceName = "AAAAAAAAAAAA";
+        interpreter.set(traceName, new LinkedList<ChainElement>());
     }
 
     public void evaluateBlockWithAllInputs(List<Object> inputs, CtBlock<?> block) {
@@ -38,8 +47,21 @@ public class BshEvaluator {
         });
     }
 
-    private void evaluateBlockWithOneInput(Object input, CtBlock<?> block) throws EvalError {
+    public void evaluateStatements(List<CtStatement> statements) {
+        statements.forEach(statement -> {
+            try {
+                interpreter.eval(statement.toString());
+            } catch (EvalError evalError) {
+                evalError.printStackTrace();
+            }
+        });
+    }
+
+    public void setInput(Object input) throws EvalError {
         interpreter.set("input", input);
+    }
+
+    private void evaluateBlockWithOneInput(Object input, CtBlock<?> block) throws EvalError {
         block.getStatements().forEach(ctStatement -> {
             try {
                 interpreter.eval(ctStatement.toString());
@@ -49,4 +71,11 @@ public class BshEvaluator {
         });
     }
 
+    public String getTraceName() {
+        return traceName;
+    }
+
+    public List<ChainElement> getTraceValue() throws EvalError {
+        return (List<ChainElement>) interpreter.get(traceName);
+    }
 }

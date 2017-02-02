@@ -15,7 +15,7 @@ public class DDebuggerImpl implements DDebugger<Object> {
     public CauseEffectChain debug(Challenge<Object> c) {
         final Launcher launcher = new Launcher();
         // TODO change this (get the absolute path of a Java class)
-        launcher.addInputResource("/Users/salla/workspace/colombo/src/main/java/fil/iagl/opl/colombo/challenge/RacistChallenge.java");
+        launcher.addInputResource("/Users/salla/workspace/colombo/src/main/java/fil/iagl/opl/colombo/challenge/TotoChallenge.java");
         final List<Object> inputs = Arrays.asList(Color.WHITE, Color.BLACK, Color.BLUE);
         launcher.addProcessor(new ChallengeProcessor(inputs));
         launcher.run();
